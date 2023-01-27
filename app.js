@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // import routers
-const peopleRouter = require("./routes/people.routes");
+const userRouter = require("./routes/user.routes");
 const productRouter = require("./routes/product.routes")
 
 // database connection function
@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/v1/people", peopleRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
 
 module.exports = app;

@@ -4,6 +4,7 @@ const productSchema = mongoose.Schema(
   {
     name: {
       type: String,
+      unique: true,
       required: [true, "Please provide a name"],
       trim: true,
       minLength: [3, "Name must be at least 3 characters."],
@@ -13,6 +14,8 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: [true, "Price is required"],
     },
+    previousPrice: Number,
+
     description: {
       type: String,
       required: true,
@@ -21,7 +24,7 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["kg", "litre", "pcs"],
+        values: ["pcs"],
         message: "unit value can't be {VALUE}, must be kg/litre/pcs",
       },
     },
@@ -43,36 +46,81 @@ const productSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
-      enum: {
-        values: ["in-stock", "out-of-stock", "discontinued"],
-        message: "status can't be {VALUE}",
-      },
+      default: "in-stock",
     },
     color: {
-      type: String,
+      type: Array,
     },
+    size: {
+      type: Array,
+    },
+    style: Array,
     category: {
       type: String,
       required: true,
       enum: {
-        values: ["chair", "table", "sofa", "storage"],
-        message:
-          "category value can't be {VALUE}, must be chair/table/sofa/storage",
+        values: [
+          "table",
+          "chair",
+          "home-furniture",
+          "steel-furniture",
+          "garments-furniture",
+          "office-furniture",
+        ],
+        message: "category value can't be {VALUE}",
       },
+    },
+    subCategory: {
+      type: String,
+      required: true,
+      enum: {
+        values: [
+          "cupboard",
+          "work-station",
+          "office-almirah",
+          "filling-cabinet",
+          "computer-table",
+          "shoe-rack",
+          "office-drawer",
+          "side-cabinet",
+          "book-shelf",
+          "dinner-wagon",
+          "wardrobe",
+          "managerial-chair",
+          "executive-table",
+          "fixed-chair",
+          "group-chair",
+          "managerial-table",
+          "special-product",
+          "interior-works",
+          "class-room-chair-&-table",
+          "office-sofa",
+          "high-back-chair",
+          "reading-table",
+          "showcase-&-corner-shelf",
+          "tv-trolley",
+          "dining-table-&-chair",
+          "bed",
+          "dressing-table",
+          "multipurpose-shelf",
+          "reception-table",
+          "medium-back-chair",
+          "low-back-chair",
+          "garments-furniture",
+          "kitchen-cabinet",
+        ],
+        message: "category value can't be {VALUE}",
+      },
+    },
+    views: {
+      type: Number,
+      default: 0,
     },
   },
   {
     timestamps: true,
   }
 );
-
-productSchema.pre("save", function (next) {
-  if (this.quantity == 0) {
-    this.status = "out-of-stock";
-  }
-  next();
-});
 
 productSchema.methods.logger = function () {
   console.log(`Data save for ${this.name}`);

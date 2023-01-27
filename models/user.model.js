@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const peopleSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
   firstName: {
     type: String,
     required: [true, "Please provide a first name"],
@@ -58,8 +58,30 @@ const peopleSchema = mongoose.Schema({
       message: "Password don't match",
     },
   },
+  role: {
+    type: String,
+    enum: ["admin", "moderator", "user"],
+    default: "user",
+  },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
-const People = mongoose.model("people", peopleSchema);
+userSchema.pre("save", function (next) {
+  const password = this.password;
+  const hashedPassword = bcrypt.hashSync(password);
 
-module.exports = People;
+  this.password = hashedPassword;
+  this.confirmPassword = undefined;
+  next();
+});
+
+userSchema.methods.comparePassword = function (password, hash) {
+  const isPasswordValid = bcrypt.compareSync(password, hash);
+  return isPasswordValid;
+};
+
+const User = mongoose.model("user", userSchema);
+
+module.exports = User;
