@@ -28,5 +28,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/uploads", express.static("./images"))
 
 module.exports = app;

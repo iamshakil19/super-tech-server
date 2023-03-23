@@ -9,7 +9,9 @@ const {
 
 exports.createProduct = async (req, res) => {
   try {
-    const result = await createProductService(req.body);
+    const productData = JSON.parse(req.body?.others);
+    const finalProductData = { ...productData, primaryImage: req.file.filename };
+    const result = await createProductService(finalProductData);
     res.status(200).send({
       success: true,
       message: "Data inserted successfully",
@@ -56,10 +58,10 @@ exports.getProducts = async (req, res) => {
       queries.limit = Number(limit);
     }
 
-    const product = await getProductService(filters, queries);
+    const products = await getProductService(filters, queries);
     res.status(200).send({
       success: true,
-      data: product,
+      data: products,
     });
   } catch (error) {
     res.status(400).send({
