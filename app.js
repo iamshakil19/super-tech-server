@@ -14,6 +14,7 @@ app.use(cors());
 // import routers
 const userRouter = require("./routes/user.routes");
 const productRouter = require("./routes/product.routes")
+const orderRouter = require("./routes/order.routes")
 
 // database connection function
 databaseConnection();
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/uploads", express.static("./images"))
 
 module.exports = app;

@@ -23,7 +23,6 @@ exports.getProductByIdService = async (id) => {
 };
 
 exports.updateProductService = async (productId, data) => {
-  console.log(productId, data);
   const result = await Product.updateOne(
     {
       _id: productId,

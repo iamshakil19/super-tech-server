@@ -16,8 +16,10 @@ const productSchema = mongoose.Schema(
     },
     primaryImage: {
       type: String,
-      // required: [true, "Primary image is required"],
-      default: "",
+      required: [true, "Primary image is required"],
+    },
+    extraImages: {
+      type: Array,
     },
     description: {
       type: String,

@@ -11,8 +11,10 @@ router
   .post(
     verifyToken,
     authorization("admin", "moderator"),
-    uploader.single("primaryImage"),
-    // uploader.array("extraImages"),
+    uploader.fields([
+      { name: "primaryImage", maxCount: 1 },
+      { name: "extraImages", maxCount: 10 },
+    ]),
     productControllers.createProduct
   );
 
@@ -20,13 +22,10 @@ router
   .route("/:id")
   .get(productViewCount, productControllers.getProductById)
   .patch(productControllers.updateProduct)
-  .delete(verifyToken, productControllers.deleteProduct);
+  .delete(
+    verifyToken,
+    authorization("admin", "moderator"),
+    productControllers.deleteProduct
+  );
 
 module.exports = router;
-
-/* 
-uploader.fields([
-      { name: "primaryImage", maxCount: 1 },
-      { name: "extraImages", maxCount: 5 },
-    ])
-*/

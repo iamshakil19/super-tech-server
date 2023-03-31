@@ -9,9 +9,16 @@ exports.findUserByEmailService = async (email) => {
   return await User.findOne({ email: email });
 };
 
-exports.findAllUserService = async () => {
-  const users = await User.find({});
-  return users;
+exports.getAllUserService = async (filters, queries) => {
+  const users = await User.find(filters)
+    .skip(queries.skip)
+    .limit(queries.limit)
+    .select(queries.fields)
+    .sort(queries.sortBy);
+
+  const totalUser = await User.countDocuments(filters);
+  const pageCount = Math.ceil(totalUser / queries.limit);
+  return { users, totalUser: totalUser, pageCount };
 };
 
 exports.getUserByEmailService = async (email) => {
@@ -33,11 +40,17 @@ exports.updateUserService = async (id, data) => {
   );
   return result;
 };
+
 exports.updateAvatarService = async (id, avatar) => {
   const result = await User.updateOne(
     { _id: id },
     { $set: { avatar: avatar } },
     { runValidators: true }
   );
+  return result;
+};
+
+exports.deleteUserService = async (id) => {
+  const result = await User.deleteOne({ _id: id });
   return result;
 };

@@ -1,26 +1,57 @@
 const { isValidObjectId } = require("mongoose");
-const User = require("../models/user.model");
+
 const {
   signupService,
   findUserByEmailService,
-  findAllUserService,
   updateUserService,
-  getUserByEmailService,
+  // getUserByEmailService,
   updateAvatarService,
+  getAllUserService,
+  deleteUserService,
 } = require("../services/user.services");
 const { generateToken } = require("../utils/token");
 
 exports.allUser = async (req, res) => {
   try {
-    const users = await findAllUserService();
+    let filters = { ...req.query };
+    const excludeFields = ["sort", "page", "limit"];
+    excludeFields.forEach((field) => delete filters[field]);
 
+    let filterString = JSON.stringify(filters);
+    filterString = filterString.replace(
+      /\b(gt|gte|lt|lte)\b/g,
+      (match) => `$${match}`
+    );
+    filters = JSON.parse(filterString);
+
+    const queries = {};
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      queries.sortBy = sortBy;
+    }
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      queries.fields = fields;
+    }
+
+    if (req.query.page) {
+      const { page = 1, limit = 2 } = req.query;
+      const skip = (page - 1) * Number(limit);
+      queries.skip = skip;
+      queries.limit = Number(limit);
+    }
+
+    const users = await getAllUserService(filters, queries);
     res.status(200).send({
       success: true,
       data: users,
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(400).send({
       success: false,
+      message: "can't get the data",
       error: error.message,
     });
   }
@@ -66,6 +97,13 @@ exports.login = async (req, res) => {
       return res.status(401).send({
         success: false,
         error: "No user found. Please create an account",
+      });
+    }
+
+    if (!user.access) {
+      return res.status(404).send({
+        success: false,
+        error: "You don't have access to this website",
       });
     }
 
@@ -141,6 +179,7 @@ exports.getMe = async (req, res) => {
 exports.updateUserInfo = async (req, res) => {
   try {
     const { id } = req.params;
+
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
@@ -168,7 +207,7 @@ exports.updateUserInfo = async (req, res) => {
 };
 
 exports.updateUserAvatar = async (req, res) => {
-  const avatar = req?.file?.filename
+  const avatar = req?.file?.filename;
   try {
     const { id } = req.params;
     if (!isValidObjectId(id)) {
@@ -192,6 +231,32 @@ exports.updateUserAvatar = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "could't update the user avatar",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ success: false, error: "Not a valid id" });
+    }
+    const result = await deleteUserService(id);
+    if (!result.deletedCount) {
+      return res.status(400).send({
+        success: false,
+        error: "Couldn't delete the user",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "User delete successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "couldn't delete the user",
       error: error.message,
     });
   }

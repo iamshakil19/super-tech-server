@@ -1,47 +1,31 @@
 const { isValidObjectId } = require("mongoose");
 
 const {
-  createProductService,
-  getProductService,
-  getProductByIdService,
-  updateProductService,
-  deleteProductService,
-} = require("../services/product.services");
+  createOrderService,
+  getOrderService,
+  getOrderByEmailService,
+  updateOrderService,
+  deleteOrderService,
+} = require("../services/order.services");
 
-exports.createProduct = async (req, res) => {
-  const extraImages = [];
-  const extraImagesData = req.files.extraImages;
-
-  if (extraImagesData?.length > 0) {
-    for (let i = 0; i < extraImagesData.length; i++) {
-      const extraImage = extraImagesData[i].filename;
-      extraImages.push(extraImage);
-    }
-  }
-  const primaryImage = req.files?.primaryImage[0]?.filename;
+exports.createOrder = async (req, res) => {
   try {
-    const productData = JSON.parse(req.body?.others);
-    const finalProductData = {
-      ...productData,
-      primaryImage,
-      extraImages,
-    };
-    const result = await createProductService(finalProductData);
+    const result = await createOrderService(req.body);
     res.status(200).send({
       success: true,
-      message: "Data inserted successfully",
+      message: "Order inserted successfully",
       data: result,
     });
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: "data is not inserted",
+      message: "order is not inserted",
       error: error.message,
     });
   }
 };
 
-exports.getProducts = async (req, res) => {
+exports.getOrders = async (req, res) => {
   try {
     let filters = { ...req.query };
     const excludeFields = ["sort", "page", "limit"];
@@ -67,16 +51,16 @@ exports.getProducts = async (req, res) => {
     }
 
     if (req.query.page) {
-      const { page = 1, limit = 2 } = req.query;
+      const { page = 1, limit = 10 } = req.query;
       const skip = (page - 1) * Number(limit);
       queries.skip = skip;
       queries.limit = Number(limit);
     }
 
-    const products = await getProductService(filters, queries);
+    const orders = await getOrderService(filters, queries);
     res.status(200).send({
       success: true,
-      data: products,
+      data: orders,
     });
   } catch (error) {
     res.status(400).send({
@@ -87,26 +71,14 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-exports.getProductById = async (req, res) => {
+exports.getOrderByEmail = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    if (!isValidObjectId(id)) {
-      return res.status(400).send({ success: false, error: "Not a valid id" });
-    }
-
-    const product = await getProductByIdService(id);
-
-    if (!product) {
-      return res.status(400).send({
-        success: false,
-        error: "couldn't find a product with this id",
-      });
-    }
+    const { email } = req.params;
+    const myOrders = await getOrderByEmailService(email);
 
     res.status(200).send({
       success: true,
-      data: product,
+      data: myOrders,
     });
   } catch (error) {
     res.status(400).send({
@@ -117,14 +89,15 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-exports.updateProduct = async (req, res) => {
+exports.updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
-    const result = await updateProductService(id, req.body);
+
+    const result = await updateOrderService(id, req.body);
+
     if (!result.modifiedCount) {
       return res.status(400).send({
         success: false,
@@ -134,7 +107,7 @@ exports.updateProduct = async (req, res) => {
 
     res.status(200).send({
       success: true,
-      message: "Successfully update the product",
+      message: "Successfully update the order",
       data: result,
     });
   } catch (error) {
@@ -146,29 +119,27 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+exports.deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
-    const result = await deleteProductService(id);
+    const result = await deleteOrderService(id);
     if (!result.deletedCount) {
       return res.status(400).send({
         success: false,
         error: "Couldn't delete the product",
       });
     }
-
     res.status(200).send({
       success: true,
-      message: "Product delete successfully",
+      message: "Order delete successfully",
     });
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: "couldn't delete the product",
+      message: "couldn't delete the order",
       error: error.message,
     });
   }

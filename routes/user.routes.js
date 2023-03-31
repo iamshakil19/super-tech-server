@@ -5,14 +5,16 @@ const uploader = require("../middlewares/uploader");
 const verifyToken = require("../middlewares/verifyToken");
 
 router.get("/", userController.allUser);
-router.get("/me", verifyToken, userController.getMe);
+
 router
   .route("/:id")
   // .get(userController.getUserByEmail)
-  .patch(verifyToken, userController.updateUserInfo);
+  .patch(verifyToken, authorization("admin"), userController.updateUserInfo)
+  .delete(verifyToken, authorization("admin", "moderator"), userController.deleteUser);
 
 router.post("/signup", userController.signup);
 router.post("/login", userController.login);
+// router.get("/me", verifyToken, userController.getMe);
 
 router.patch(
   "/avatar/:id",
