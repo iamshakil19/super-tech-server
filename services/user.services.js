@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const fs = require("fs");
+const path = require("path");
 
 exports.signupService = async (userInfo) => {
   const user = await User.create(userInfo);
@@ -56,6 +58,13 @@ exports.updateUserService = async (id, data) => {
 };
 
 exports.updateAvatarService = async (id, avatar) => {
+  const doc = await User.findById({ _id: id });
+  const oldImagePath = doc.avatar;
+  if (oldImagePath) {
+    const oldFilePath = path.join(__dirname, "../images", oldImagePath);
+    fs.unlinkSync(oldFilePath);
+  }
+
   const result = await User.updateOne(
     { _id: id },
     { $set: { avatar: avatar } },
