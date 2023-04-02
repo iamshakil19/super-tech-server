@@ -7,6 +7,7 @@ const dotenv = require("dotenv").config();
 const { default: mongoose } = require("mongoose");
 const databaseConnection = require("./utils/dbConnection");
 
+
 // Request Parser
 app.use(express.json());
 app.use(cors());

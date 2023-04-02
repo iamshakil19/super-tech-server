@@ -1,4 +1,6 @@
 const Product = require("../models/product.model");
+const fs = require("fs");
+const path = require("path");
 
 exports.createProductService = async (finalProductData) => {
   const product = await Product.create(finalProductData);
@@ -6,13 +8,34 @@ exports.createProductService = async (finalProductData) => {
 };
 
 exports.getProductService = async (filters, queries) => {
-  const products = await Product.find(filters)
+  let finalFilter = {};
+  if (filters.productSearchText) {
+    finalFilter = {
+      ...finalFilter,
+      $or: [
+        { name: { $regex: filters.productSearchText, $options: "i" } },
+        { category: { $regex: filters.productSearchText, $options: "i" } },
+        { subCategory: { $regex: filters.productSearchText, $options: "i" } },
+      ],
+    };
+  }
+  if (filters.category) {
+    finalFilter = { ...finalFilter, category: filters.category };
+  }
+  if (filters.subCategory) {
+    finalFilter = { ...finalFilter, subCategory: filters.subCategory };
+  }
+  if (filters.price) {
+    finalFilter = { ...finalFilter, price: filters.price };
+  }
+  console.log(finalFilter);
+  const products = await Product.find(finalFilter)
     .skip(queries.skip)
     .limit(queries.limit)
     .select(queries.fields)
     .sort(queries.sortBy);
 
-  const totalProduct = await Product.countDocuments(filters);
+  const totalProduct = await Product.countDocuments(finalFilter);
   const pageCount = Math.ceil(totalProduct / queries.limit);
   return { products, totalProduct, pageCount };
 };
@@ -38,6 +61,15 @@ exports.updateProductService = async (productId, data) => {
 };
 
 exports.deleteProductService = async (id) => {
+  const doc = await Product.findById({ _id: id });
+  const filePath = path.join(__dirname, "../images", doc.primaryImage);
+  fs.unlinkSync(filePath);
+  if (doc.extraImages?.length > 0) {
+    for (const extraImages of doc.extraImages) {
+      const filePath = path.join(__dirname, "../images", extraImages);
+      fs.unlinkSync(filePath);
+    }
+  }
   const result = await Product.deleteOne({ _id: id });
   return result;
 };

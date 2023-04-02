@@ -14,6 +14,7 @@ const { generateToken } = require("../utils/token");
 exports.allUser = async (req, res) => {
   try {
     let filters = { ...req.query };
+
     const excludeFields = ["sort", "page", "limit"];
     excludeFields.forEach((field) => delete filters[field]);
 

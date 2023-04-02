@@ -4,7 +4,7 @@ const validator = require("validator");
 const orderSchema = mongoose.Schema(
   {
     orderId: {
-      type: Number,
+      type: String,
       unique: true,
       required: [true, "Please provide a name"],
     },

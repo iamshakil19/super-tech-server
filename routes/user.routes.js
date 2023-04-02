@@ -5,7 +5,6 @@ const uploader = require("../middlewares/uploader");
 const verifyToken = require("../middlewares/verifyToken");
 
 router.get("/", userController.allUser);
-
 router
   .route("/:id")
   // .get(userController.getUserByEmail)

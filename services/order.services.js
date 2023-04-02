@@ -6,13 +6,27 @@ exports.createOrderService = async (data) => {
 };
 
 exports.getOrderService = async (filters, queries) => {
-  const orders = await Order.find(filters)
+  let finalFilter = {};
+  if (filters.orderSearchText) {
+    finalFilter = {
+      ...finalFilter,
+      $or: [
+        { orderId: { $regex: filters.orderSearchText, $options: "i" } },
+        { name: { $regex: filters.orderSearchText, $options: "i" } },
+        { phoneNumber: { $regex: filters.orderSearchText, $options: "i" } },
+      ],
+    };
+  }
+  if (filters.status) {
+    finalFilter = { ...finalFilter, status: filters.status };
+  }
+  const orders = await Order.find(finalFilter)
     .skip(queries.skip)
     .limit(queries.limit)
     .select(queries.fields)
     .sort(queries.sortBy);
 
-  const totalOrders = await Order.countDocuments(filters);
+  const totalOrders = await Order.countDocuments(finalFilter);
   const pageCount = Math.ceil(totalOrders / queries.limit);
   return { orders, totalOrders, pageCount };
 };

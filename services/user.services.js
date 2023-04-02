@@ -10,13 +10,27 @@ exports.findUserByEmailService = async (email) => {
 };
 
 exports.getAllUserService = async (filters, queries) => {
-  const users = await User.find(filters)
+  let finalFilter = {};
+  if (filters.userSearchText) {
+    finalFilter = {
+      ...finalFilter,
+      $or: [
+        { email: { $regex: filters.userSearchText, $options: "i" } },
+        { name: { $regex: filters.userSearchText, $options: "i" } },
+        { phoneNumber: { $regex: filters.userSearchText, $options: "i" } },
+      ],
+    };
+  }
+  if (filters.role) {
+    finalFilter = { ...finalFilter, role: filters.role };
+  }
+  const users = await User.find(finalFilter)
     .skip(queries.skip)
     .limit(queries.limit)
     .select(queries.fields)
     .sort(queries.sortBy);
 
-  const totalUser = await User.countDocuments(filters);
+  const totalUser = await User.countDocuments(finalFilter);
   const pageCount = Math.ceil(totalUser / queries.limit);
   return { users, totalUser: totalUser, pageCount };
 };
