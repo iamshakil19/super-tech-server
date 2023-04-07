@@ -54,7 +54,8 @@ exports.updateUserService = async (id, data) => {
       runValidators: true,
     }
   );
-  return result;
+  const updatedUser = await User.findById({ _id: id });
+  return { result, updatedUser };
 };
 
 exports.updateAvatarService = async (id, avatar) => {
@@ -70,7 +71,8 @@ exports.updateAvatarService = async (id, avatar) => {
     { $set: { avatar: avatar } },
     { runValidators: true }
   );
-  return result;
+  const updatedUser = await User.findById({ _id: id });
+  return { result, updatedUser };
 };
 
 exports.deleteUserService = async (id) => {

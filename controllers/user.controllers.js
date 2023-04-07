@@ -186,7 +186,7 @@ exports.updateUserInfo = async (req, res) => {
     }
 
     const result = await updateUserService(id, req.body);
-    if (!result.modifiedCount) {
+    if (!result.result.modifiedCount) {
       return res.status(400).send({
         success: false,
         error: "couldn't update the user with this id",
@@ -216,7 +216,7 @@ exports.updateUserAvatar = async (req, res) => {
     }
 
     const result = await updateAvatarService(id, avatar);
-    if (!result.modifiedCount) {
+    if (!result.result.modifiedCount) {
       return res.status(400).send({
         success: false,
         error: "couldn't update the user with this id",

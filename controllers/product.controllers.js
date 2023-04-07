@@ -6,6 +6,7 @@ const {
   getProductByIdService,
   updateProductService,
   deleteProductService,
+  productBulkUpdateService,
 } = require("../services/product.services");
 
 exports.createProduct = async (req, res) => {
@@ -125,6 +126,59 @@ exports.updateProduct = async (req, res) => {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
     const result = await updateProductService(id, req.body);
+    if (!result.modifiedCount) {
+      return res.status(400).send({
+        success: false,
+        error: "couldn't update the product with this id",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Successfully update the product",
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "could't update the product",
+      error: error.message,
+    });
+  }
+};
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).send({ success: false, error: "Not a valid id" });
+    }
+    const result = await updateProductService(id, req.body);
+    if (!result.modifiedCount) {
+      return res.status(400).send({
+        success: false,
+        error: "couldn't update the product with this id",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Successfully update the product",
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "could't update the product",
+      error: error.message,
+    });
+  }
+};
+
+exports.productBulkUpdate = async (req, res) => {
+  console.log(req.body);
+  try {
+    const result = await productBulkUpdateService(req.body);
     if (!result.modifiedCount) {
       return res.status(400).send({
         success: false,

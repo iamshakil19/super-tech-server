@@ -50,6 +50,10 @@ const orderSchema = mongoose.Schema(
       type: String,
       default: "pending",
     },
+    deliveryDate: {
+      type: String,
+      default: "",
+    },
     company: {
       type: String,
     },

@@ -17,7 +17,7 @@ router
     ]),
     productControllers.createProduct
   );
-
+router.route("/bulk-update").patch(productControllers.productBulkUpdate);
 router
   .route("/:id")
   .get(productViewCount, productControllers.getProductById)

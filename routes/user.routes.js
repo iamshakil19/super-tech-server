@@ -8,8 +8,16 @@ router.get("/", userController.allUser);
 router
   .route("/:id")
   // .get(userController.getUserByEmail)
-  .patch(verifyToken, authorization("admin"), userController.updateUserInfo)
-  .delete(verifyToken, authorization("admin", "moderator"), userController.deleteUser);
+  .patch(
+    verifyToken,
+    authorization("user", "admin", "moderator"),
+    userController.updateUserInfo
+  )
+  .delete(
+    verifyToken,
+    authorization("admin", "moderator"),
+    userController.deleteUser
+  );
 
 router.post("/signup", userController.signup);
 router.post("/login", userController.login);

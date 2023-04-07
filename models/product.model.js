@@ -14,6 +14,10 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: [true, "Price is required"],
     },
+    discount: {
+      type: Number,
+      default: 0,
+    },
     primaryImage: {
       type: String,
       required: [true, "Primary image is required"],
@@ -23,7 +27,8 @@ const productSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: [true, "Description is required"],
+      trim: true,
     },
     colors: {
       type: Array,
