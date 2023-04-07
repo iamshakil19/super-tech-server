@@ -32,11 +32,12 @@ exports.getOrderService = async (filters, queries) => {
 };
 
 exports.getOrderByEmailService = async (email) => {
-  const result = await Order.find({ email: email });
+  const result = await Order.find({ email: email }).sort({ createdAt: -1 });
   return result;
 };
 
 exports.updateOrderService = async (id, data) => {
+  console.log(data);
   const result = await Order.updateOne(
     { _id: id },
     { $set: data },

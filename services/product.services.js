@@ -28,7 +28,6 @@ exports.getProductService = async (filters, queries) => {
   if (filters.price) {
     finalFilter = { ...finalFilter, price: filters.price };
   }
-  console.log(finalFilter);
   const products = await Product.find(finalFilter)
     .skip(queries.skip)
     .limit(queries.limit)

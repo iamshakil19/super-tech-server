@@ -176,7 +176,7 @@ exports.updateProduct = async (req, res) => {
 };
 
 exports.productBulkUpdate = async (req, res) => {
-  console.log(req.body);
+
   try {
     const result = await productBulkUpdateService(req.body);
     if (!result.modifiedCount) {
