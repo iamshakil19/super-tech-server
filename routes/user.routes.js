@@ -4,7 +4,12 @@ const authorization = require("../middlewares/authorization");
 const uploader = require("../middlewares/uploader");
 const verifyToken = require("../middlewares/verifyToken");
 
-router.get("/", userController.allUser);
+router.get(
+  "/",
+  verifyToken,
+  authorization("admin", "moderator"),
+  userController.allUser
+);
 router
   .route("/:id")
   // .get(userController.getUserByEmail)

@@ -73,6 +73,7 @@ const productSchema = mongoose.Schema(
           "executiveTable",
           "managerTable",
           "computerTable",
+          "conferenceTable",
 
           "drawer",
           "sideCabinet",

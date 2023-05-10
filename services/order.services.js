@@ -37,7 +37,6 @@ exports.getOrderByEmailService = async (email) => {
 };
 
 exports.updateOrderService = async (id, data) => {
-  console.log(data);
   const result = await Order.updateOne(
     { _id: id },
     { $set: data },

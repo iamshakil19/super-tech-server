@@ -16,6 +16,5 @@ exports.updateInvoiceNoService = async (id) => {
     { $inc: { invoiceNo: 1 } },
     { new: true }
   );
-  console.log(result);
   return result;
 };

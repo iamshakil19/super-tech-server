@@ -95,7 +95,6 @@ exports.updateOrder = async (req, res) => {
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
-    console.log(req.body);
     const result = await updateOrderService(id, req.body);
 
     if (!result.modifiedCount) {

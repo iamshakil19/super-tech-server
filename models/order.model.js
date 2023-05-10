@@ -61,6 +61,10 @@ const orderSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    advanceAmount: {
+      type: Number,
+      default: 0,
+    },
     division: {
       type: String,
       trim: true,
