@@ -24,7 +24,7 @@ exports.createInvoiceNo = async (req, res) => {
 
 exports.getInvoiceNo = async (req, res) => {
   try {
-    const id = "64324ee5e6e7b41c5721d524";
+    const id = "65014867cc3d8fea7d8d35d1";
 
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
@@ -55,7 +55,7 @@ exports.getInvoiceNo = async (req, res) => {
 exports.updateInvoiceNo = async (req, res) => {
 
   try {
-    const id = "64324ee5e6e7b41c5721d524";
+    const id = "65014867cc3d8fea7d8d35d1";
     if (!isValidObjectId(id)) {
       return res.status(400).send({ success: false, error: "Not a valid id" });
     }
